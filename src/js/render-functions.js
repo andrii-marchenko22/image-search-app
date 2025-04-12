@@ -61,3 +61,15 @@ export const showLoadMoreButton = () => {
 export const hideLoadMoreButton = () => {
     loadMore.classList.remove("load-more-show");
 }
+
+export function smoothScroll() {
+    const galleryItem = document.querySelector('.gallery-item');
+    if (galleryItem) {
+        const { height } = galleryItem.getBoundingClientRect();
+        window.scrollBy({
+            left: 0,
+            top: height * 1,
+            behavior: 'smooth',
+        });
+    }
+}

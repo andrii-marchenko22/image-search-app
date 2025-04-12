@@ -190,3 +190,26 @@ input[type="text"]:focus {
 .loader.show {
   display: block;
 }
+
+.load-more-btn {
+  padding: 10px 20px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: none;
+  text-align: center;
+}
+
+.load-more-btn:hover {
+  background-color: #a419d2;
+}
+
+.load-more-show {
+  display: block;
+  justify-content: center;
+  margin: 20px auto ;
+}
