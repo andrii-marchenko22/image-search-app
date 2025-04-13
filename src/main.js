@@ -10,61 +10,49 @@ const btn = document.querySelector(".btn-form");
 const loadMore = document.querySelector(".load-more-btn");
 
 let page = 1;
-let userInp = "";
+let userValue = "";
+let loadImages = 0;
 
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
     
-
-    const userValue = event.target.elements['search-text'].value.trim();
-    page = 1;
+    userValue = event.target.elements['search-text'].value.trim();
 
     if (!userValue) {
-        iziToast.error({
-            position: "topLeft",
-            title: 'Error',
-            message: 'Please enter a search query!',
-        });
+        errorToast();
+        input.focus();
         return;
     }
 
-    userInp = userValue;
-    showLoader();
+        page = 1;
+        loadImages = 0;
+        clearGallery();
+        hideLoadMoreButton();
+        showLoader();
     
     try {
-
-        const { data } = await getImagesByQuery(userInp, page);
+        const { data } = await getImagesByQuery(userValue, page);
         const imagesObj = data.hits;
         
-        hideLoader(); 
-        clearGallery();
-
-
-        if (imagesObj.length === 0) {
-            iziToast.error({
-            position: "topLeft",
-            title: 'Error',
-            message: 'Sorry, there are no images matching your search query. Please try again!',
-            });
+        if (!imagesObj.length) {
+        errorToast();
+        input.focus();
         return;
     }
         
-
-        if (data.totalHits > imagesObj.length) {
-        showLoadMoreButton()
-    }
-
         createGallery(imagesObj);
+        loadImages += imagesObj.length;
+
+        if (loadImages < data.totalHits) {
+        showLoadMoreButton();
+        }
         
     }   catch (error) {
-            hideLoader(); 
-            iziToast.error({
-            position: "topLeft",
-            title: 'Error',
-            message: 'There was an error fetching the images. Please try again later.',
-            });
+        errorToast();
+        
     }   finally {
+        hideLoader(); 
         event.target.reset();
     }
 });
@@ -73,27 +61,31 @@ form.addEventListener("submit", async event => {
 loadMore.addEventListener("click", async event => {
     page++;
     loadMore.disabled = true;
-
     showLoader()
 
     try {
-        const { data } = await getImagesByQuery(userInp, page);
+        const { data } = await getImagesByQuery(userValue, page);
         const imagesObj = data.hits;
 
         createGallery(imagesObj);
         smoothScroll();
+        loadImages += imagesObj.length;
 
-        data.totalHits > page * 15 ? showLoadMoreButton() : hideLoadMoreButton();
+        loadImages < data.totalHits ? showLoadMoreButton() : hideLoadMoreButton();
         
     }   catch (error) {
-            iziToast.error({
-            position: "topLeft",
-            title: 'Error',
-            message: 'There was an error fetching the images. Please try again later.',
-            });
-        
+        errorToast();
+
     }   finally {
             hideLoader();
             loadMore.disabled = false;
     }
 })
+
+const errorToast = () => {
+    iziToast.error({
+    position: "topLeft",
+    title: 'Error',
+    message: 'There was an error fetching the images. Please try again later.',
+    });
+}
