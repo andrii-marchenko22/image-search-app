@@ -12,10 +12,10 @@ export default defineConfig(({ command }) => {
     root: 'src',
     base: '/',
     build: {
-      outDir: 'dist',
+      outDir: '../dist',
       sourcemap: true,
       rollupOptions: {
-        input: glob.sync('./src/*.html'),
+        input: glob.sync('./*.html'),
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
@@ -40,7 +40,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       injectHTML(),
-      FullReload(['./src/**/**.html']),
+      FullReload(['./**/*.html']),
       SortCss({
         sort: 'mobile-first',
       }),
